@@ -33,6 +33,8 @@ g++ builtin functions:
 	\item \verb|__builtin_parity(x)|: parity of number of ones
 \end{itemize}
 
+There are separate functions of form \verb|__builtin_clzll(x)| for 64-bit integers.
+
 Iterate subsets of set s:
 \begin{lstlisting}[language=C++]
 int cs = 0;
@@ -80,7 +82,7 @@ Changing \texttt{less} to \verb|less_equal| makes the set work like multiset. Ho
 
 \subsection{Union-find}
 
-Uses path compression, \texttt{id(x)} has time complexity $O(a^{-1}(n))$ where $a^{-1}$ is inverse Ackermann function.
+Uses path compression, \texttt{id(x)} has amortized time complexity $O(a^{-1}(n))$ where $a^{-1}$ is inverse Ackermann function.
 
 \lstinputlisting[language=C++]{src/unionfind/unionfind.cpp}
 
@@ -147,15 +149,67 @@ Matrix $A$ = $a \times n$, matrix $B$ = $n \times b$. Matrix multiplication:
 
 \[ AB[i,j] = \sum_{k=1}^{n} A[i,k] \cdot B[k,j] \]
 
+Let linear recurrence $f(n) = c_1f(n-1) + c_2f(n-2) + \dots + c_kf(n-k)$ with initial values $f(0), f(1), \dots, f(k-1)$. $c_1, c_2, \dots, c_n$ are constants.
+
+Transition matrix $X$:
+
+\[
+	X =
+	\begin{pmatrix}
+		0 & 1 & 0 & \dots & 0 \\
+		0 & 0 & 1 & \dots & 0 \\
+		\vdots & \vdots & \vdots & \ddots & \vdots \\
+		0 & 0 & 0 & \dots & 1 \\
+		c_k & c_{k-1} & c_{k-2} & \dots & c_1
+	\end{pmatrix}
+\]
+
+Now $f(n)$ can be calculated in $O(k^3 log(n))$:
+
+\[
+	\begin{pmatrix}
+		f(n) \\
+		f(n+1) \\
+		\vdots \\
+		f(n+k-1)
+	\end{pmatrix}
+	= X^n \cdot
+	\begin{pmatrix}
+		f(0) \\
+		f(1) \\
+		\vdots \\
+		f(k-1)
+	\end{pmatrix}
+\]
+
 \lstinputlisting[language=C++]{src/matrix/matrix.cpp}
 
 \section {Graph algorithms}
 
-\subsection {Strong connectivity}
+\subsection {Kosaraju's algorithm}
+
+Finds strongly connected components in a directed graph in $O(n + m)$.
+
+\begin{enumerate}
+	\item Create an inverse graph where all edges are reversed.
+	\item Do a DFS traversal on original graph and add all nodes in post-order to a vector.
+	\item Reverse the previous vector.
+	\item Iterate the vector. If a node doesn't belong to a component, create new component and assign current node to it, and do a DFS search \textbf{in inverse graph} from current node and add all reachable nodes to the component that was just created.
+\end{enumerate}
 
 \subsection {Bridges}
 
+An edge $u-v$ is a bridge if there is no edge from the subtree of $v$ to any node with lower depth than $u$ in DFS tree. $O(n+m)$.
+
+\lstinputlisting[language=C++]{src/bridges/bridges.cpp}
+
 \subsection {Articulation points}
+
+A vertex $u$ is an articulation point if there is no edge from the subtree of $u$ to any parent of $u$ in DFS tree, of if $u$ is the root of DFS tree and has at least $2$ children. $O(n+m)$ if removing duplicates doesn't count.
+
+Set \texttt{res} can be replaced with a vector if duplicates are removed afterwards.
+
+\lstinputlisting[language=C++]{src/articulation_points/articulation_points.cpp}
 
 \subsection {Maximum flow (scaling algorithm)}
 
