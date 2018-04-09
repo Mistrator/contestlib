@@ -215,6 +215,14 @@ Set \texttt{res} can be replaced with a vector if duplicates are removed afterwa
 
 \subsection {Heavy-light decomposition}
 
+Supports updates and queries on path between two vertices $a$ and $b$ in $O(log^2(n))$.
+
+Doesn't explicitly look for LCA, instead climbs upwards from the lower chain until both vertices are in the same chain.
+
+Requires a segment tree implementation that corresponds to the queries, for example lazy segtree can be pasted directly in.
+
+\lstinputlisting[language=C++]{src/hld/hld.cpp}
+
 \section {String algorithms}
 
 \subsection {Polynomial hashing}
