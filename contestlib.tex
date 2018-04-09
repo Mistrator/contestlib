@@ -1,0 +1,173 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[landscape, twocolumn]{geometry} % enable landscape, two-column layout
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{courier}
+
+\renewcommand{\familydefault}{\sfdefault}
+\lstset{basicstyle=\footnotesize\ttfamily, breaklines=true}
+
+
+\begin{document}
+
+\title{C++ contest library}
+\author{Miska Kananen}
+\date{\today}
+\maketitle 
+
+\tableofcontents
+
+\section{Environment and workflow}
+\subsection{Compilation script}
+\lstinputlisting[language=bash]{src/compilation/build}
+
+\section{General techniques}
+\subsection{Bit tricks}
+
+g++ builtin functions:
+\begin{itemize}
+	\item \verb|__builtin_clz(x)|: number of zeros in the beginning
+	\item \verb|__builtin_ctz(x)|: number of zeros in the end
+	\item \verb|__builtin_popcount(x)|: number of set bits
+	\item \verb|__builtin_parity(x)|: parity of number of ones
+\end{itemize}
+
+Iterate subsets of set s:
+\begin{lstlisting}[language=C++]
+int cs = 0;
+do {
+	// process subset cs
+} while(cs=(cs-s)&s);
+\end{lstlisting}
+
+\section{Data structures}
+
+\subsection{Lazy segment tree}
+
+Indexed $0$..$N-1$, defaults to range add+sum query tree which supports 2 queries:
+\begin{enumerate}
+	\item Add $x$ to all elements between $l$..$r$
+	\item Find the sum of all elements between $l$..$r$
+\end{enumerate}
+
+\lstinputlisting[language=C++]{src/lazy_segtree/lazy_segtree.cpp}
+
+\subsection {Sparse segment tree}
+
+\subsection {Treap}
+
+Implements split, merge, kth element, range update and range reverse in $O(log(n))$. Range update adds a value to every element in a subarray. Treap is $1$-indexed.
+
+Note: Memory management tools warn of about 30 MB memory leak for 500 000 elements. This is because nodes are not deleted when exiting program and is irrelevant in a competition. Deleting nodes would slow treap down by a factor of 3.
+
+\lstinputlisting[language=C++]{src/treap/treap.cpp}
+
+\subsection {Indexed set (policy-based data structures)}
+
+Works like \texttt{std::set} but adds support for indices. Set is 0-indexed. Requires g++. Has two additional functions:
+
+\begin{enumerate}
+	\item \verb|find_by_order(x)|: return an iterator to element at index $x$
+	\item \verb|order_of_key(x)|: return the index that element $x$ has or would have in the set, depending on if it exists
+\end{enumerate}
+
+Both functions work in $O(log(n))$.
+
+Changing \texttt{less} to \verb|less_equal| makes the set work like multiset. However, elements can't be removed.
+
+\lstinputlisting[language=C++]{src/pbds/pbds.cpp}
+
+\subsection{Union-find}
+
+Uses path compression, \texttt{id(x)} has time complexity $O(a^{-1}(n))$ where $a^{-1}$ is inverse Ackermann function.
+
+\lstinputlisting[language=C++]{src/unionfind/unionfind.cpp}
+
+\section {Mathematics}
+
+\subsection {Number theory}
+
+\begin{itemize}
+	\item Prime factorization of $n$: $p_1^{\alpha_1}p_2^{\alpha_2} \dots p_k^{\alpha_k}$
+	\item Number of factors: $\tau(n) = \prod_{i=1}^{k} (\alpha_i+1)$
+	\item Sum of factors: $\sigma(n) = \prod_{i=1}^{k} \frac{p_i^{\alpha_i+1}-1}{p_i-1}$
+	\item Product of factors: $\mu(n) = n^{\tau(n)/2}$
+\end{itemize}
+
+Euler's totient function $\varphi(n)$ $(1, 1, 2, 2, 4, 2, 6, 4, 6, 4, \dots)$: counts numbers coprime with $n$ in range $1 \dots n$
+
+\[
+	\varphi(n) =
+	\begin{cases}
+		n-1 &\text{if $n$ is prime} \\
+		\prod_{i=1}^{k} p_i^{a_i-1}(p_i-1) &\text{otherwise}
+	\end{cases}
+\]
+
+Fermat's theorem: $x^{m-1} \mod m = 1$ when $m$ is prime and $x$ and $m$ are coprime. It follows that $x^k \mod m = x^{k \mod (m-1)} \mod m$.
+
+Modular inverse $x^{-1} = x^{\varphi(m)-1}$. If $m$ is prime, $x^{-1} = x^{m-2}$. Inverse exists if and only if $x$ and $m$ are coprime.
+
+\subsection {Combinatorics}
+
+Binomial coefficients:
+
+\[ \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k} \]
+\[ \binom{n}{0} = \binom{n}{n} = 1 \]
+
+Catalan numbers $(1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862, 16796 \dots)$:
+
+\[ C_n = \frac{1}{n+1} \binom{2n}{n} \]
+
+Classic examples of Catalan numbers: number of balanced pairs of parentheses,  number of mountain ranges ($n$ upstrokes and $n$ downstrokes all staying above the original line), number of paths from upper left corner to lower right corner staying above the main diagonal in a $n \times n$ square, ways to trianguate a $n+2$ sided regular polygon, ways to shake hands between $2n$ people in a circle such that no arms cross, number of rooted binary trees with $n$ nodes that have $2$ children, number of rooted trees with $n$ edges, number of permutations of $1 \dots n$ that don't have an increasing subsequence of length $3$.
+
+Number of derangements (no element stays in original place) of $1, 2, \dots, n$ $(1, 0, 1, 2, 9, 44, 265, 1854, 14833, 133496, 1334961, \dots)$:
+
+\[
+	f(n) =
+	\begin{cases}
+		0 &n = 1 \\
+		1 &n = 2 \\
+		(n-1)(f(n-2)+f(n-1)) &n > 2
+	\end{cases}
+\]
+
+\subsection{Pollard-Rho}
+
+Finds a prime factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support for factoring 64-bit integers.
+
+If $x$ is prime, algorithm might not terminate or it might return $1$. Primality must be checked separately.
+
+\lstinputlisting[language=C++]{src/pollardrho/pollardrho.cpp}
+
+\subsection {Matrices}
+
+Matrix $A$ = $a \times n$, matrix $B$ = $n \times b$. Matrix multiplication:
+
+\[ AB[i,j] = \sum_{k=1}^{n} A[i,k] \cdot B[k,j] \]
+
+\lstinputlisting[language=C++]{src/matrix/matrix.cpp}
+
+\section {Graph algorithms}
+
+\subsection {Strong connectivity}
+
+\subsection {Bridges}
+
+\subsection {Articulation points}
+
+\subsection {Maximum flow (scaling algorithm)}
+
+\subsection {Heavy-light decomposition}
+
+\section {String algorithms}
+
+\subsection {Polynomial hashing}
+
+If hash collisions are likely, compute two hashes with two distinct pairs of constants of magnitude $10^9$ and use their product as the actual hash.
+
+\lstinputlisting[language=C++]{src/stringhashing/stringhashing.cpp}
+
+
+\end{document}

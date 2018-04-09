@@ -1,0 +1,3 @@
+#!/bin/bash
+
+g++ $1 -o ${1%.*} -std=c++11 -Wall -Wextra -Wshadow -ftrapv -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -fsanitize=address -fsanitize=undefined -fno-sanitize-recover
