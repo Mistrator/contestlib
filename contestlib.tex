@@ -47,15 +47,15 @@ do {
 
 \subsection{Lazy segment tree}
 
-Indexed $0$..$N-1$, defaults to range add+sum query tree which supports 2 queries:
-\begin{enumerate}
-	\item Add $x$ to all elements between $l$..$r$
-	\item Find the sum of all elements between $l$..$r$
-\end{enumerate}
+Implements range add and range sum query in $O(log(n))$. $0$-indexed.
 
 \lstinputlisting[language=C++]{src/lazy_segtree/lazy_segtree.cpp}
 
 \subsection {Sparse segment tree}
+
+Implements point update and range sum query in $O(log (n))$. Memory usage is around $40$ MB with a range of $2^{30} = 10^9$ after $10^5$ operations. $0$-indexed.
+
+\lstinputlisting[language=C++]{src/sparse_segtree/sparse_segtree.cpp}
 
 \subsection {2D segment tree}
 
@@ -182,9 +182,13 @@ Now $f(n)$ can be calculated in $O(k^3 log(n))$:
 
 \lstinputlisting[language=C++]{src/matrix/matrix.cpp}
 
-\subsection{Pollard-Rho}
+\subsection {Miller-Rabin}
 
-Finds a prime factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support for factoring 64-bit integers.
+Deterministic primality test for all $64$-bit integers. Requires \verb|__int128| support to test over 32-bit integers.
+
+\subsection {Pollard-Rho}
+
+Finds a prime factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support to factor over 32-bit integers.
 
 If $x$ is prime, algorithm might not terminate or it might return $1$. Primality must be checked separately.
 
