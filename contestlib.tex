@@ -57,6 +57,12 @@ Indexed $0$..$N-1$, defaults to range add+sum query tree which supports 2 querie
 
 \subsection {Sparse segment tree}
 
+\subsection {2D segment tree}
+
+Implements point update and subgrid query in $O(log^2(n))$. Grid is $0$-indexed.
+
+\lstinputlisting[language=C++]{src/2d_segtree/2dsegtree.cpp}
+
 \subsection {Treap}
 
 Implements split, merge, kth element, range update and range reverse in $O(log(n))$. Range update adds a value to every element in a subarray. Treap is $1$-indexed.
@@ -135,14 +141,6 @@ Number of derangements (no element stays in original place) of $1, 2, \dots, n$ 
 	\end{cases}
 \]
 
-\subsection{Pollard-Rho}
-
-Finds a prime factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support for factoring 64-bit integers.
-
-If $x$ is prime, algorithm might not terminate or it might return $1$. Primality must be checked separately.
-
-\lstinputlisting[language=C++]{src/pollardrho/pollardrho.cpp}
-
 \subsection {Matrices}
 
 Matrix $A$ = $a \times n$, matrix $B$ = $n \times b$. Matrix multiplication:
@@ -184,6 +182,27 @@ Now $f(n)$ can be calculated in $O(k^3 log(n))$:
 
 \lstinputlisting[language=C++]{src/matrix/matrix.cpp}
 
+\subsection{Pollard-Rho}
+
+Finds a prime factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support for factoring 64-bit integers.
+
+If $x$ is prime, algorithm might not terminate or it might return $1$. Primality must be checked separately.
+
+\lstinputlisting[language=C++]{src/pollardrho/pollardrho.cpp}
+
+\section {Geometry}
+
+\subsection {Geometric primitives}
+\subsubsection {Representations}
+\subsubsection {Polygon area}
+\subsubsection {Point in a polygon}
+
+\subsection {Intersections}
+\subsubsection {Line-line}
+\subsubsection {Line-circle}
+
+\subsection {Convex hull}
+
 \section {Graph algorithms}
 
 \subsection {Kosaraju's algorithm}
@@ -213,13 +232,29 @@ Set \texttt{res} can be replaced with a vector if duplicates are removed afterwa
 
 \subsection {Maximum flow (scaling algorithm)}
 
+Scaling algorithm, uses DFS to find an augmenting path where each edge weight is larger than or equal to a certain threshold. Time complexity $O(m^2log(c))$, where c is the starting threshold (sum of all edge weights on the graph).
+
+\lstinputlisting[language=C++]{src/maxflow/maxflow.cpp}
+
+\subsection {Theorems on flows and cuts}
+
+Maximum flow is always equal to minimum cut. Minimum cut can be found by running a maximum flow algorithm and dividing the resulting flow graph into two sets of vertices. Set A contains all vertices that can be reached from source using positive-weight edges. Set B contains all other vertices. Minimum cut consists of the edges between these two sets.
+
+Number of edge-disjoint (= each edge can be used at most once) paths in a graph is equal to maximum flow on graph where capacity of each edge is $1$.
+
+Number of vertex-disjoint paths can be found the same way as edge-disjoint paths, but each vertex is duplicated and an edge is added between the two vertices. All incoming edges go to the first vertex and all outgoing edges start from the second vertex.
+
+Maximum matching of a bipartite graph can be found by adding a source and a sink to the graph and connecting source to all left vertices and sink to all right vertices. Maximum matching equals maximum flow on this graph.
+
+König's theorem: sizes of a minimum vertex cover (= minimum set of vertices such that each edge has at least one endpoint in the set) and a maximum matching are always equal in a bipartite graph. Maximum independent set (= maximum set of vertices such that no two vertices in the set are connected with an edge) consists of the vertices not in a minimum vertex cover.
+
 \subsection {Heavy-light decomposition}
 
 Supports updates and queries on path between two vertices $a$ and $b$ in $O(log^2(n))$.
 
 Doesn't explicitly look for LCA, instead climbs upwards from the lower chain until both vertices are in the same chain.
 
-Requires a segment tree implementation that corresponds to the queries, for example lazy segtree can be pasted directly in.
+Requires a segment tree implementation that corresponds to the queries. Lazy segtree, for example, can be pasted directly in.
 
 \lstinputlisting[language=C++]{src/hld/hld.cpp}
 
