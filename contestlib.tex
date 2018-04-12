@@ -186,6 +186,8 @@ Now $f(n)$ can be calculated in $O(k^3 log(n))$:
 
 Deterministic primality test for all $64$-bit integers. Requires \verb|__int128| support to test over 32-bit integers.
 
+\lstinputlisting[language=C++]{src/miller_rabin/miller_rabin.cpp}
+
 \subsection {Pollard-Rho}
 
 Finds a prime factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support to factor over 32-bit integers.
