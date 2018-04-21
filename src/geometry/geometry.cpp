@@ -161,6 +161,11 @@ point rot_pivot(point a, point ps, ct ang) {
 	return ((a-ps)*polar((ct)1.0, ang)+ps);
 }
 
+// translate a by dist to the direction of ang
+point translate(point a, ct dist, ct ang) {
+	return a+polar(dist, ang);
+}
+
 // check if a -> b -> c turns counterclockwise
 bool ccw(point a, point b, point c) {
 	return cross({b.X-a.X, b.Y-a.Y}, {c.X-a.X, c.Y-a.Y}) > 0;

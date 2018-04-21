@@ -4,9 +4,11 @@
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{courier}
+\usepackage{mathtools}
 
 \renewcommand{\familydefault}{\sfdefault}
 \lstset{basicstyle=\footnotesize\ttfamily, breaklines=true}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor} % define floor macro
 
 
 \begin{document}
@@ -42,6 +44,19 @@ do {
 	// process subset cs
 } while(cs=(cs-s)&s);
 \end{lstlisting}
+
+\subsection{Mo's algorithm}
+
+Processes range queries on an array offline in $O(n\sqrt{n}f(n))$, where the array has $n$ elements, there are $n$ queries and addition/removal of an element to/from the active set takes $O(f(n))$ time.
+
+The array is divided into $\sqrt{n}$ blocks of $k = \sqrt{n}$ elements. Queries are sorted such that query $[a_i, b_i]$ goes before $[a_j, b_j]$ if:
+
+\begin{enumerate}
+	\item $\floor{\frac{a_i}{k}} < \floor{\frac{a_j}{k}}$ or
+	\item $\floor{\frac{a_i}{k}} = \floor{\frac{a_j}{k}}$ and $b_i < b_j$
+\end{enumerate}
+
+Active range is maintained between queries and the endpoints of the range are moved accordingly. Both endpoints move $O(n\sqrt{n})$ steps in total during the algorithm.
 
 \section{Data structures}
 
@@ -181,6 +196,25 @@ Now $f(n)$ can be calculated in $O(k^3 log(n))$:
 \]
 
 \lstinputlisting[language=C++]{src/matrix/matrix.cpp}
+
+\subsection {Summations and progressions}
+
+\begin{itemize}
+
+	\item Sum of naturals: $\sum_{i=1}^{n} x = \frac{n(n+1)}{2}$
+	\item Sum of squares: $\sum_{i=1}^{n} x^2 = \frac{n(n+1)(n+2)}{6}$
+	\item Arithmetic progression: $a + \dots + b = \frac{n(a+b)}{2}$, where $n$ is the number of terms, $a$ is the first term and $b$ is the last term
+	\item Geometric progression: $a + ar + ar^2 + \dots + ar^{n-1} = a \frac{1-r^n}{1-r}$, where $n$ is the number of terms, $a$ is the first term and $r (r \neq 1)$ is the ratio between two successive terms
+	\begin{itemize}
+		\item If $r = 1$, sum is $na$
+		\item Also $a + ar + ar^2 + \dots + b = \frac{a-br}{1-r}$, where $a$ is the first term, $b$ is the last term and $r$ is the ration between two successive terms
+	\end{itemize}
+
+\end{itemize}
+
+Terms of sum $S = \sum_{i=1}^{n} \floor{\frac{n}{i}}$ get at most $O(\sqrt{n})$ distinct values. All terms and their counts can be found as follows in $O(\sqrt{n})$:
+
+\lstinputlisting[language=C++]{src/harmonic_floor/harmonic_floor.cpp}
 
 \subsection {Miller-Rabin}
 
