@@ -24,6 +24,16 @@
 \subsection{Compilation script}
 \lstinputlisting[language=bash]{src/compilation/build}
 
+\subsection{Stress testing}
+
+\texttt{srand(time(NULL));} changes seed only once a second and is unsuitable for stress testing. RNG seed initialization (requires x86 and g++):
+
+\lstinputlisting[language=C++]{src/stress_testing/srand.cpp}
+
+Shell script for stress testing with a brute force solution and a test generator:
+
+\lstinputlisting[language=bash]{src/stress_testing/stress.sh}
+
 \section{General techniques}
 \subsection{Bit tricks}
 
@@ -85,6 +95,12 @@ Implements split, merge, kth element, range update and range reverse in $O(log(n
 Note: Memory management tools warn of about 30 MB memory leak for 500 000 elements. This is because nodes are not deleted when exiting program and is irrelevant in a competition. Deleting nodes would slow treap down by a factor of 3.
 
 \lstinputlisting[language=C++]{src/treap/treap.cpp}
+
+\subsection {Sparse table}
+
+Implements range minimum/maximum query in $O(1)$ with $O(n log(n))$ preprocessing. $0$-indexed.
+
+\lstinputlisting[language=C++]{src/sparse_table/sparse_table.cpp}
 
 \subsection {Indexed set (policy-based data structures)}
 
