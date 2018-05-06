@@ -9,6 +9,7 @@
 \renewcommand{\familydefault}{\sfdefault}
 \lstset{basicstyle=\footnotesize\ttfamily, breaklines=true}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor} % define floor macro
+\DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}} % define Stirling macro
 
 
 \begin{document}
@@ -45,7 +46,7 @@ g++ builtin functions:
 	\item \verb|__builtin_parity(x)|: parity of number of ones
 \end{itemize}
 
-There are separate functions of form \verb|__builtin_clzll(x)| for 64-bit integers.
+There are separate functions of form \verb|__builtin_clzll(x)| for 64-bit integers. For the compiler to utilize the native \texttt{POPCNT} instruction, \texttt{\#pragma GCC target("sse4.2")} should be used.
 
 Iterate subsets of set s:
 \begin{lstlisting}[language=C++]
@@ -67,6 +68,26 @@ The array is divided into $\sqrt{n}$ blocks of $k = \sqrt{n}$ elements. Queries 
 \end{enumerate}
 
 Active range is maintained between queries and the endpoints of the range are moved accordingly. Both endpoints move $O(n\sqrt{n})$ steps in total during the algorithm.
+
+\subsection {Arbitrary precision decimals}
+
+Python 3 implements arbitrary precision decimal arithmetic in module \texttt{decimal}. All decimal numbers are represented exactly and the precision is user-definable.
+
+\lstinputlisting[language=Python]{src/decimal/dec.py}
+
+\subsection {g++ pragmas}
+
+Pragmas optimize all functions defined afterwards. They should be located in the very beginning of the source code, even before includes, in order to optimize imported standard library code too.
+
+\texttt{\#pragma GCC optimize("O3")} or \texttt{\#pragma GCC optimize("Ofast")}, \texttt{Ofast} enables more optimizations but isn't always faster.
+
+\texttt{\#pragma GCC optimize("unroll-loops")}
+
+\texttt{\#pragma GCC target("arch=skylake")}
+
+\texttt{\#pragma GCC target("mmx,sse,sse2,sse3,ssse3,sse4.2,popcnt,avx,tune=native")} for ivybridge if \texttt{arch=ivybridge} fails.
+
+All possible target architectures are listed in compiler report if an invalid architecture is given to \texttt{arch}. Supported Intel Core generations in order: nehalem, sandybridge, ivybridge (for CF), haswell (first avx2), broadwell, skylake.
 
 \section{Data structures}
 
@@ -171,6 +192,12 @@ Number of derangements (no element stays in original place) of $1, 2, \dots, n$ 
 		(n-1)(f(n-2)+f(n-1)) &n > 2
 	\end{cases}
 \]
+
+Stirling numbers of the second kind $\stirling{n}{k}$: number of ways to partition a set of $n$ objects into $k$ non-empty subsets.
+\[ 1 \] \[ 0, 1 \] \[0, 1, 1 \] \[0, 1, 3, 1 \] \[ 0, 1, 7, 6, 1 \] \[ 0, 1, 15, 25, 10, 1 \] \[ 0, 1, 31, 90, 65, 15, 1 \]
+
+\[ \stirling{n+1}{k} = k\stirling{n}{k}+\stirling{n}{k-1} \quad (k > 0) \] 
+\[ \stirling{0}{0} = 1, \stirling{n}{0} = \stirling{0}{n} = 0 \quad (n > 0) \]
 
 \subsection {Matrices}
 
