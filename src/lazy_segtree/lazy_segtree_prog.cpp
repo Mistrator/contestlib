@@ -74,14 +74,36 @@ void build(int s = 1, int l = 0, int r = N-1) {
 	st[s] = st[2*s]+st[2*s+1]; // change operator
 }
 
+// test code below
+int n, q;
+
 /*
 	TESTED, correct
 	Allowed indices 0..N-1
 	2 types of queries: range add and range sum
 */
 int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cin >> n >> q;
 	for (int i = 1; i <= n; ++i) {
 		cin >> st[i+N];
 	}
 	build();
+	for (int cq = 0; cq < q; ++cq) {
+		int tp;
+		cin >> tp;
+		if (tp == 1) {
+			int l, r;
+			ll x;
+			cin >> l >> r >> x;
+			muuta(l, r, x);
+		}
+		else {
+			int l, r;
+			cin >> l >> r;
+			cout << kysy(l, r) << "\n";
+		}
+	}
+	return 0;
 }

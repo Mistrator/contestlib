@@ -7,5 +7,4 @@ int main() {
 	ll seed;
 	asm("rdtsc" : "=A"(seed));
 	srand(seed);
-	return 0;
 }

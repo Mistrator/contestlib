@@ -64,3 +64,32 @@ void muuta(int y, int x, ll u) {
         }
     }
 }
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n >> q;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            ll a;
+            cin >> a;
+            muuta(i, j, a);
+        }
+    }
+    
+    for (int i = 0; i < q; ++i) {
+        int tp;
+        cin >> tp;
+        if (tp == 1) {
+            int y, x, u;
+            cin >> y >> x >> u;
+            muuta(y-1, x-1, u);
+        }
+        if (tp == 2) {
+            int y1, x1, y2, x2;
+            cin >> y1 >> x1 >> y2 >> x2;
+            cout << summa(y1-1, x1-1, y2-1, x2-1) << "\n";
+        }
+    }   
+    return 0;
+} 

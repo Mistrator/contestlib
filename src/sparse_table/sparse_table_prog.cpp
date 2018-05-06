@@ -30,4 +30,11 @@ int main() {
 			else st[j][i] = b;
 		}
 	}
+
+	for (int cq = 0; cq < q; ++cq) {
+		int a, b;
+		cin >> a >> b;
+		cout << rmq(a, b) << "\n";
+	}
+	return 0;
 }

@@ -175,13 +175,43 @@ int n, q;
 /*
 	TESTED, correct.
 
+	Treap, allows split, merge, kth element, range update and range reverse in O(log n)
+	It's also possible to implement range sum query (ioi16-treap IV)
+
+	Implemented range update adds a value to every element in a subarray.
+
 	NOTE: Memory management tools warn of a ~ 30MB memory leak for 500 000 nodes. This is because nodes are not deleted on program exit. Deleting would severely harm performance (over 3 times slower) and is unnecessary in a contest setting since the program is terminated anyway. Leak can be fixed by deleting nodes recursively on exit starting from leaf nodes and progressing towards root (post-order dfs).
 */
 int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	
 	cin >> n >> q;
 	node *tree = nullptr;
 	for (int i = 1; i <= n; ++i) {
 		node *nw = new node(0);
 		merge(tree, tree, nw); // treap construction
 	}
+
+	for (int cq = 0; cq < q; ++cq) {
+		char tp;
+		cin >> tp;
+		if (tp == 'G') {
+			int cind;
+			cin >> cind;
+			cout << kthElem(tree, cind) << "\n";
+		}
+		else if (tp == 'R') {
+			int a, b;
+			cin >> a >> b;
+			rangeInv(tree, a, b);
+		}
+		else {
+			int a, b;
+			ll d;
+			cin >> a >> b >> d;
+			rangeUpd(tree, a, b, d);
+		}
+	}
+	return 0;
 }

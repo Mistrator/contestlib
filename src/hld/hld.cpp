@@ -102,27 +102,13 @@ ll path_query(int a, int b) {
     return cres;
 }
 
-
-int n, m;
-
 // TESTED, correct
 // do updates and queries on paths between two nodes in a tree
 // interface: path_update() and path_query()
 int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    cin >> n >> m;
-    for (int i = 0; i < n-1; ++i) {
-        int a, b;
-        cin >> a >> b;
-        g[a].push_back(b);
-        g[b].push_back(a);
-    }
-
     // init hld
     hdfs(1, -1, 0);
     hld(1);
 
     // handle queries
-    return 0;
 }

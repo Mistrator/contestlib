@@ -47,3 +47,18 @@ bool miller_rabin(ll x) {
 	}
 	return true;
 }
+
+int t;
+
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cin >> t;
+	for (int i = 0; i < t; ++i) {
+		ll n;
+		cin >> n;
+		if (miller_rabin(n)) cout << "YES\n";
+		else cout << "NO\n";
+	}
+	return 0;
+}

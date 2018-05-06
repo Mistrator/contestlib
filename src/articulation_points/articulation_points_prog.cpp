@@ -45,7 +45,20 @@ void adfs(int s, int p) {
 
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cin >> n >> m;
+    for (int i = 0; i < m; ++i) {
+        int a, b;
+        cin >> a >> b;
+        g[a].push_back(b);
+        g[b].push_back(a);
+    }
+    
     for (int i = 1; i <= n; ++i) {
         if (!v[i]) adfs(i, -1);
     }
+    cout << res.size() << "\n";
+    for (int a : res) cout << a << "\n";
+    return 0;
 }

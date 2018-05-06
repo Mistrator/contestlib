@@ -31,5 +31,4 @@ int main() {
 		k[i] = i;
 		s[i] = 1;
 	}
-	return 0;
 }
