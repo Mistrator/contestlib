@@ -167,18 +167,11 @@ void rangeInv(node *&t, int a, int b) {
 	t = cur;
 }
 
+int n;
 
-// test code below
-
-int n, q;
-
-/*
-	TESTED, correct.
-
-	NOTE: Memory management tools warn of a ~ 30MB memory leak for 500 000 nodes. This is because nodes are not deleted on program exit. Deleting would severely harm performance (over 3 times slower) and is unnecessary in a contest setting since the program is terminated anyway. Leak can be fixed by deleting nodes recursively on exit starting from leaf nodes and progressing towards root (post-order dfs).
-*/
+// TESTED, correct
 int main() {
-	cin >> n >> q;
+	cin >> n;
 	node *tree = nullptr;
 	for (int i = 1; i <= n; ++i) {
 		node *nw = new node(0);

@@ -56,9 +56,14 @@ do {
 } while(cs=(cs-s)&s);
 \end{lstlisting}
 
+Get lowest $1$-bit:
+\begin{lstlisting}[language=C++]
+int lsone = x&(-x);
+\end{lstlisting}
+
 \subsection{Mo's algorithm}
 
-Processes range queries on an array offline in $O(n\sqrt{n}f(n))$, where the array has $n$ elements, there are $n$ queries and addition/removal of an element to/from the active set takes $O(f(n))$ time.
+Processes range queries on an array offline in $O(n\sqrt{n} \ f(n))$, where the array has $n$ elements, there are $n$ queries and addition/removal of an element to/from the active set takes $O(f(n))$ time.
 
 The array is divided into $\sqrt{n}$ blocks of $k = \sqrt{n}$ elements. Queries are sorted such that query $[a_i, b_i]$ goes before $[a_j, b_j]$ if:
 
@@ -77,15 +82,17 @@ Python 3 implements arbitrary precision decimal arithmetic in module \texttt{dec
 
 \subsection {g++ pragmas}
 
-Pragmas optimize all functions defined afterwards. They should be located in the very beginning of the source code, even before includes, in order to optimize imported standard library code too.
+Pragmas optimize all functions defined afterwards. They should be located in the very beginning of the source code, even before includes in order to optimize imported standard library code.
 
-\texttt{\#pragma GCC optimize("O3")} or \texttt{\#pragma GCC optimize("Ofast")}, \texttt{Ofast} enables more optimizations but isn't always faster.
+\texttt{\#pragma GCC optimize("O3")}
+
+\texttt{\#pragma GCC optimize("Ofast")}, enables more optimizations but isn't always faster.
 
 \texttt{\#pragma GCC optimize("unroll-loops")}
 
 \texttt{\#pragma GCC target("arch=skylake")}
 
-\texttt{\#pragma GCC target("mmx,sse,sse2,sse3,ssse3,sse4.2,popcnt,avx,tune=native")} for ivybridge if \texttt{arch=ivybridge} fails.
+\texttt{\#pragma GCC target("mmx,sse,sse2,sse3,\\ssse3,sse4.2,popcnt,avx,tune=native")} for ivybridge if \texttt{arch=ivybridge} fails.
 
 All possible target architectures are listed in compiler report if an invalid architecture is given to \texttt{arch}. Supported Intel Core generations in order: nehalem, sandybridge, ivybridge (for CF), haswell (first avx2), broadwell, skylake.
 
@@ -99,7 +106,7 @@ Implements range add and range sum query in $O(log(n))$. $0$-indexed.
 
 \subsection {Sparse segment tree}
 
-Implements point update and range sum query in $O(log (n))$. Memory usage is around $40$ MB with a range of $2^{30} = 10^9$ after $10^5$ operations. $0$-indexed.
+Implements point update and range sum query in $O(log(n))$. Memory usage is around $40$ MB with a range of $2^{30} = 10^9$ after $10^5$ random operations. $0$-indexed.
 
 \lstinputlisting[language=C++]{src/sparse_segtree/sparse_segtree.cpp}
 
@@ -119,7 +126,7 @@ Note: Memory management tools warn of about 30 MB memory leak for 500 000 elemen
 
 \subsection {Sparse table}
 
-Implements range minimum/maximum query in $O(1)$ with $O(n log(n))$ preprocessing. $0$-indexed.
+Implements range minimum/maximum query in $O(1)$ with \\ $O(n \ log(n))$ preprocessing. $0$-indexed.
 
 \lstinputlisting[language=C++]{src/sparse_table/sparse_table.cpp}
 
@@ -180,7 +187,7 @@ Catalan numbers $(1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862, 16796 \dots)$:
 
 \[ C_n = \frac{1}{n+1} \binom{2n}{n} \]
 
-Classic examples of Catalan numbers: number of balanced pairs of parentheses,  number of mountain ranges ($n$ upstrokes and $n$ downstrokes all staying above the original line), number of paths from upper left corner to lower right corner staying above the main diagonal in a $n \times n$ square, ways to trianguate a $n+2$ sided regular polygon, ways to shake hands between $2n$ people in a circle such that no arms cross, number of rooted binary trees with $n$ nodes that have $2$ children, number of rooted trees with $n$ edges, number of permutations of $1 \dots n$ that don't have an increasing subsequence of length $3$.
+Classic examples of Catalan numbers: number of balanced pairs of parentheses,  number of mountain ranges ($n$ upstrokes and $n$ downstrokes all staying above the original line), number of paths from upper left corner to lower right corner staying above the main diagonal in a $n \times n$ square, ways to triangulate a $n+2$ sided regular polygon, ways to shake hands between $2n$ people in a circle such that no arms cross, number of rooted binary trees with $n$ nodes that have $2$ children, number of rooted trees with $n$ edges, number of permutations of $1 \dots n$ that don't have an increasing subsequence of length $3$.
 
 Number of derangements (no element stays in original place) of $1, 2, \dots, n$ $(1, 0, 1, 2, 9, 44, 265, 1854, 14833, 133496, 1334961, \dots)$:
 
@@ -250,7 +257,7 @@ Now $f(n)$ can be calculated in $O(k^3 log(n))$:
 	\item Geometric progression: $a + ar + ar^2 + \dots + ar^{n-1} = a \frac{1-r^n}{1-r}$, where $n$ is the number of terms, $a$ is the first term and $r (r \neq 1)$ is the ratio between two successive terms
 	\begin{itemize}
 		\item If $r = 1$, sum is $na$
-		\item Also $a + ar + ar^2 + \dots + b = \frac{a-br}{1-r}$, where $a$ is the first term, $b$ is the last term and $r$ is the ration between two successive terms
+		\item Also $a + ar + ar^2 + \dots + b = \frac{a-br}{1-r}$, where $a$ is the first term, $b$ is the last term and $r$ is the ratio between two successive terms
 	\end{itemize}
 
 \end{itemize}
@@ -286,8 +293,8 @@ Finds strongly connected components in a directed graph in $O(n + m)$.
 \begin{enumerate}
 	\item Create an inverse graph where all edges are reversed.
 	\item Do a DFS traversal on original graph and add all nodes in post-order to a vector.
-	\item Reverse the previous vector.
-	\item Iterate the vector. If a node doesn't belong to a component, create new component and assign current node to it, and do a DFS search \textbf{in inverse graph} from current node and add all reachable nodes to the component that was just created.
+	\item Reverse the obtained vector.
+	\item Iterate the vector. If a node doesn't belong to a component, create new component and assign current node to it, and do a DFS \textbf{in inverse graph} from current node and add all reachable nodes to the component that was just created.
 \end{enumerate}
 
 \subsection {Bridges}
@@ -298,7 +305,7 @@ An edge $u-v$ is a bridge if there is no edge from the subtree of $v$ to any nod
 
 \subsection {Articulation points}
 
-A vertex $u$ is an articulation point if there is no edge from the subtree of $u$ to any parent of $u$ in DFS tree, of if $u$ is the root of DFS tree and has at least $2$ children. $O(n+m)$ if removing duplicates doesn't count.
+A vertex $u$ is an articulation point if there is no edge from the subtree of $u$ to any parent of $u$ in DFS tree, or if $u$ is the root of DFS tree and has at least $2$ children. $O(n+m)$ if removing duplicates doesn't count.
 
 Set \texttt{res} can be replaced with a vector if duplicates are removed afterwards.
 
@@ -306,7 +313,7 @@ Set \texttt{res} can be replaced with a vector if duplicates are removed afterwa
 
 \subsection {Maximum flow (scaling algorithm)}
 
-Scaling algorithm, uses DFS to find an augmenting path where each edge weight is larger than or equal to a certain threshold. Time complexity $O(m^2log(c))$, where c is the starting threshold (sum of all edge weights on the graph).
+Scaling algorithm, uses DFS to find an augmenting path where each edge weight is larger than or equal to a certain threshold. Time complexity $O(m^2 \ log(c))$, where c is the starting threshold (sum of all edge weights in the graph).
 
 \lstinputlisting[language=C++]{src/maxflow/maxflow.cpp}
 

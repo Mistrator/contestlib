@@ -12,7 +12,7 @@ typedef complex<ct> point;
 #define F first
 #define S second
 
-const ct EPS = 0.000000001; // 1e-9
+const ct EPS = 0.000001; // 1e-6
 const ct PI = 3.14159265359;
 
 // floating-point equality comparison
@@ -251,6 +251,7 @@ bool pi_comp(pair<point, int> p1, pair<point, int> p2) {
 // get intersection point of two line segments
 // first return val 0 = no intersection, 1 = single point, 2 = infinitely many
 // second return val = intersection point if first return val = 1, otherwise undefined
+// might miss an intersection due to precision issues if coordinates are too large, increasing epsilon works
 pair<int, point> seg_intersect(line_segment a, line_segment b) {
 	ct alen = segment_len(a);
 	ct blen = segment_len(b);
@@ -301,7 +302,7 @@ ct pgon_area(polygon pg) {
 // check if point is inside polygon
 // 0 = outside, 1 = inside, 2 = on polygon edge
 // O(n)
-// INCORRECT
+// TESTED
 int point_in_pgon(point a, polygon pg) {
 	for (int i = 0; i < pg.size()-1; ++i) {
 		if (point_on_seg(a, line_segment(pg[i], pg[i+1]))) {
@@ -309,11 +310,11 @@ int point_in_pgon(point a, polygon pg) {
 		}
 	}
 	// arbitrary angle, try to avoid polygon vertices (likely lattice points)
-	line_segment tl = line_segment(a, {(ct)1045366375, (ct)2894362571});
+	line_segment tl = line_segment(a, {(ct)1092854, (ct)1085417});
 	int icnt = 0;
 	for (int i = 0; i < pg.size()-1; ++i) {
 		auto cur = seg_intersect(tl, line_segment(pg[i], pg[i+1]));
-		if (cur.F > 0) {
+		if (cur.F == 1) {
 			icnt++;
 		}
 	}
