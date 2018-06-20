@@ -80,6 +80,18 @@ Python 3 implements arbitrary precision decimal arithmetic in module \texttt{dec
 
 \lstinputlisting[language=Python]{src/decimal/dec.py}
 
+\subsection {Arithmetic overflow checking}
+
+g++ implements efficient builtin functions for checking for arithmetic overflow. Functions are of form \linebreak \verb|bool __builtin_overflow(a, b, *res)| and return true if operation overflows. The result of the operation is returned through \texttt{res}.
+
+\begin{itemize}
+	\item \verb|__builtin_sadd_overflow()|, \linebreak \verb|__builtin_saddll_overflow|: addition
+	\item \verb|__builtin_ssub_overflow()|, \linebreak \verb|__builtin_ssubll_overflow|: subtraction
+	\item \verb|__builtin_smul_overflow()|, \linebreak \verb|__builtin_smulll_overflow|: multiplication
+\end{itemize}
+
+There are separate functions for 32- and 64-bit integers. Unsigned versions are of form \verb|__builtin_uadd_overflow()|.
+
 \subsection {g++ pragmas}
 
 Pragmas optimize all functions defined afterwards. They should be located in the very beginning of the source code, even before includes in order to optimize imported standard library code.

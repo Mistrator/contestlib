@@ -54,3 +54,11 @@ _in max prime
 999999999999999989
 _out
 YES
+_in
+295
+_out
+NO
+_in
+3814697265625
+_out
+NO
