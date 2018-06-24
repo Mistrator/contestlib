@@ -157,6 +157,14 @@ Changing \texttt{less} to \verb|less_equal| makes the set work like multiset. Ho
 
 \lstinputlisting[language=C++]{src/pbds/pbds.cpp}
 
+\subsection {k-max queue}
+
+Works like \texttt{std::queue}, but implements $O(1)$ max query for elements in queue. All operations are $O(1)$, \texttt{push\_back(x)} is amortized $O(1)$. Can be used as a min queue if elements are inserted as negative.
+
+It's not possible to return popped element on \texttt{pop\_front()}.
+
+\lstinputlisting[language=C++]{src/kmax_queue/kmax_queue.cpp}
+
 \subsection{Union-find}
 
 Uses path compression, \texttt{id(x)} has amortized time complexity $O(a^{-1}(n))$ where $a^{-1}$ is inverse Ackermann function.
