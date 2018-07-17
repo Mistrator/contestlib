@@ -294,9 +294,9 @@ Deterministic primality test for all $64$-bit integers. Requires \verb|__int128|
 
 \subsection {Pollard-Rho}
 
-Finds a prime factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support to factor over 32-bit integers.
+Finds a factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support to factor over 32-bit integers.
 
-If $x$ is prime, algorithm might not terminate or it might return $1$. Primality must be checked separately.
+If $x$ is prime or a perfect square, algorithm might not terminate or it might return $1$. Primality must be checked separately.
 
 \lstinputlisting[language=C++]{src/pollardrho/pollardrho.cpp}
 
@@ -358,6 +358,14 @@ Doesn't explicitly look for LCA, instead climbs upwards from the lower chain unt
 Requires a segment tree implementation that corresponds to the queries. Lazy segtree, for example, can be pasted directly in.
 
 \lstinputlisting[language=C++]{src/hld/hld.cpp}
+
+\section {Tree algorithms}
+
+\subsection {Smaller to larger}
+
+Answers queries offline on entire subtrees or specifically on vertices with depth $d$ in a subtree. Normally $O(n\ log\ n)$ for all queries, the complexity may worsen depending on what is stored for each node. If the depth is queried on, merge to the deepest subtree, otherwise to the largest one. When storing data for each depth, store the highest vertex last so it's efficient to append higher vertices.
+
+\lstinputlisting[language=C++]{src/smaller_to_larger/stl.cpp}
 
 \section {String algorithms}
 

@@ -18,7 +18,7 @@ ll gcd(ll a, ll b) {
     return gcd(b, a%b);
 }
 
-// return a prime factor of a
+// return a factor of a
 // st is a starting seed for pseudorandom numbers, start with 2, if algorithm fails (returns -1), increment seed
 ll pollardrho(ll a, ll st) {
     if (n%2 == 0) return 2;
@@ -35,8 +35,10 @@ ll pollardrho(ll a, ll st) {
 
 /*
 	TESTED, correct.
-    Finds a prime factor of n in O(root_4(n))
+    Finds a factor of n in O(root_4(n))
     If n is prime, alg might not terminate or it might return 1. Check for primality.
+
+    TODO: check for perfect square
 */
 int main() {
     cin >> n;
