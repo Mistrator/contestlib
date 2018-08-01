@@ -142,7 +142,9 @@ Implements range minimum/maximum query in $O(1)$ with \\ $O(n \ log(n))$ preproc
 
 \lstinputlisting[language=C++]{src/sparse_table/sparse_table.cpp}
 
-\subsection {Indexed set (policy-based data structures)}
+\subsection {Policy-based data structures}
+
+\subsubsection {Indexed set}
 
 Works like \texttt{std::set} but adds support for indices. Set is 0-indexed. Requires g++. Has two additional functions:
 
@@ -155,7 +157,13 @@ Both functions work in $O(log(n))$.
 
 Changing \texttt{less} to \verb|less_equal| makes the set work like multiset. However, elements can't be removed.
 
-\lstinputlisting[language=C++]{src/pbds/pbds.cpp}
+\lstinputlisting[language=C++]{src/pbds/indexed_set.cpp}
+
+\subsubsection {Hashmap}
+
+Works like \verb|std::unordered_map| but is many times faster.
+
+\lstinputlisting[language=C++]{src/pbds/hashmap.cpp}
 
 \subsection {k-max queue}
 
