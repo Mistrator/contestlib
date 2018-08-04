@@ -185,7 +185,11 @@ Uses path compression, \texttt{id(x)} has amortized time complexity $O(a^{-1}(n)
 
 \begin{itemize}
 	\item Prime factorization of $n$: $p_1^{\alpha_1}p_2^{\alpha_2} \dots p_k^{\alpha_k}$
-	\item Number of factors: $\tau(n) = \prod_{i=1}^{k} (\alpha_i+1)$
+	\item Number of factors: $\tau(n) = \prod_{i=1}^{k} (\alpha_i+1) \approx \sqrt[3]n$
+		\begin {itemize}
+			\item $max(\tau(1), \tau(2), \dots \tau(10^9)) = 1344$
+			\item $max(\tau(1), \tau(2), \dots, \tau(10^{18})) = 103680$
+		\end {itemize}
 	\item Sum of factors: $\sigma(n) = \prod_{i=1}^{k} \frac{p_i^{\alpha_i+1}-1}{p_i-1}$
 	\item Product of factors: $\mu(n) = n^{\tau(n)/2}$
 \end{itemize}
