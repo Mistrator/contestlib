@@ -33,15 +33,30 @@ ll pollardrho(ll a, ll st) {
     return d;
 }
 
+ll is_square(ll x) {
+	ll a = 1;
+	for (ll b = (1LL<<30); b >= 1; b /= 2) {
+		if ((a+b)*(a+b) <= x) a += b;
+	}
+	if (a*a == x) return a;
+	return -1;
+}
+
 /*
 	TESTED, correct.
     Finds a factor of n in O(root_4(n))
     If n is prime, alg might not terminate or it might return 1. Check for primality.
-
-    TODO: check for perfect square
 */
 int main() {
     cin >> n;
+
+    // check if n is square, pollardrho might fail if the input is perfect square
+    ll sq = is_square(n);
+    if (sq != -1) {
+    	cout << sq << " " << sq << "\n";
+    	return 0;
+    }
+
     ll fa = -1;
     ll st = 2;
     while (fa == -1) {
