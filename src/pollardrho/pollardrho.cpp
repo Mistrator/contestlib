@@ -63,5 +63,6 @@ int main() {
         fa = pollardrho(n, st++);
     }
     cout << min(fa, n/fa) << " " << max(fa, n/fa) << "\n";
+    
     return 0;
 }
