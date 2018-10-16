@@ -396,5 +396,11 @@ If hash collisions are likely, compute two hashes with two distinct pairs of con
 
 \lstinputlisting[language=C++]{src/stringhashing/stringhashing.cpp}
 
+\subsection {Z-algorithm}
+
+Constructs the Z-array for string $s$. Z-array tells for each $i$ the length of the longest substring that begins at $i$ and is a prefix of $s$. $O(n)$.
+
+\lstinputlisting[language=C++]{src/z_algorithm/z.cpp}
+
 
 \end{document}
