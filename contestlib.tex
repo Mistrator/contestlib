@@ -402,5 +402,10 @@ Constructs the Z-array for string $s$. Z-array tells for each $i$ the length of 
 
 \lstinputlisting[language=C++]{src/z_algorithm/z.cpp}
 
+\subsection {Suffix array}
+
+Constructs the suffix array for string $s$. By default, the array is a cyclic suffix array which has all the cyclic rotations of the string in lexicographic order. Creates a normal suffix array if \texttt{\$} is appended to the string. In that case the first element in the suffix array must be discarded.
+
+\lstinputlisting[language=C++]{src/suffix_array/suffix.cpp}
 
 \end{document}
