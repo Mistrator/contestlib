@@ -26,9 +26,9 @@ void add() {
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	n = stoi(argv[1]);
-	q = stoi(argv[2]);
-	mx = stoi(argv[3]);
+	n = 200000;
+	q = 200000;
+	mx = 1000000000;
 	/*cout << n << " " << q << "\n";
 
 	for (int i = 0; i < n; ++i) {
