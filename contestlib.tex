@@ -6,6 +6,7 @@
 \usepackage{courier}
 \usepackage{mathtools}
 \usepackage{amssymb}
+\usepackage{xcolor}
 
 \renewcommand{\familydefault}{\sfdefault}
 \lstset{basicstyle=\footnotesize\ttfamily, breaklines=true}
@@ -110,6 +111,12 @@ Pragmas optimize all functions defined afterwards. They should be located in the
 \texttt{\#pragma GCC target("mmx,sse,sse2,sse3,\\ssse3,sse4.2,popcnt,avx,tune=native")} for ivybridge if \texttt{arch=ivybridge} fails.
 
 All possible target architectures are listed in compiler report if an invalid architecture is given to \texttt{arch}. Supported Intel Core generations in order: nehalem, sandybridge, ivybridge (for CF), haswell (first avx2), broadwell, skylake.
+
+\subsection {C++11 std::random}
+
+If different ranges are required on every iteration, just create a new distribution every time, it's quite fast.
+
+\lstinputlisting[language=C++]{src/random/random.cpp}
 
 \section{Data structures}
 

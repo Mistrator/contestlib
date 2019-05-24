@@ -5,7 +5,7 @@ using namespace std;
 
 int n;
 vector<int> pr; // list of primes
-int mpf[1000005]; // minimum prime factor
+int mpf[10000005]; // minimum prime factor
 
 /*
 	Each number a has an unique representation a = px, where p is the smallest prime factor of a. (it follows that mpf[x] >= p)

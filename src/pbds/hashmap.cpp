@@ -19,7 +19,7 @@ struct chash {
 };
 
 int n;
-gp_hash_table<int, int, chash> s;
+gp_hash_table<ll, int, chash> s;
 
 int main() {
 	ios_base::sync_with_stdio(false);
