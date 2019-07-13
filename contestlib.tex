@@ -409,6 +409,14 @@ Answers queries offline on entire subtrees or specifically on vertices with dept
 
 \lstinputlisting[language=C++]{src/smaller_to_larger/stl.cpp}
 
+\subsection {Subtree merging DP}
+
+For each subtree of a tree, some DP is calculated for each vertex by merging all child subtrees of the vertex together one by one. Basically we take $a$ elements from current subtree root and the already merged child subtrees and $b$ elements from the child subtree being merged. This is the technique used in \textit{Looking for a Challenge - Barricades}.
+
+The algorithm looks like $O(n^3)$, but actually runs in $O(n^2)$.
+
+\lstinputlisting[language=C++]{src/subtree_merge_dp/subtree_merge_dp.cpp}
+
 \section {String algorithms}
 
 \subsection {Polynomial hashing}
