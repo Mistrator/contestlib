@@ -124,6 +124,16 @@ Requires AVX support from the grading CPU. If heap-allocating, memory must be al
 
 \lstinputlisting[language=C++]{src/vector_types/vector_types.cpp}
 
+\subsection {XOR basis vectors}
+
+XOR is equivalent to bitwise addition modulo 2. We can consider the bitwise representation of an integer $a$ as a $d$-dimensional vector modulo 2, where $d$ is the maximum needed bit count.
+
+We can find the basis of a vector space of $n$ $d$-element vectors in $\mathbb{Z}_2^d$ in $O(nd)$. We check for each vector whether it can be represented with current basis vectors, and if not, we add it to the basis.
+
+Let $f(v)$ be the position of the lowest 1-bit in the binary representation of $v$. We want all basis vectors to have a distinct value of $f$. Let $b_1$ be the vector in the current basis with the smallest $f$. If $f(v) < f(b_1)$ for a new vector, we just insert it, since no linear combination of current basis vectors has 1 at $f(v)$. If $f(v) = f(b_1)$, we subtract $b_1$ from $v$ and continue to $b_2$. If in the end $v$ is not a null vector, it can't be represented using current basis vectors and we have to add it as a new basis vector.
+
+\lstinputlisting[language=C++]{src/xor_basis/xor_basis.cpp}
+
 \section{Data structures}
 
 \subsection{Lazy segment tree}
