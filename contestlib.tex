@@ -181,7 +181,15 @@ Works like \texttt{std::set} but adds support for indices. Set is 0-indexed. Req
 
 Both functions work in $O(log(n))$.
 
-Changing \texttt{less} to \verb|less_equal| makes the set work like multiset. However, elements can't be removed.
+Changing \texttt{less} to \verb|less_equal| makes the set work like multiset. In this case:
+\begin{itemize}
+ \item \texttt{find()} will always return \texttt{end}
+ \item \verb|lower_bound()| works like \verb|upper_bound()| (returns an iterator to first element $> x$)
+ \item \verb|upper_bound()| works like \verb|lower_bound()| (returns an iterator to first element $ \geq x$)
+ \item \texttt{erase()} works as expected with iterators obtained from \verb|lower_bound()| and \verb|upper_bound()|, deleting a single element
+ \item \verb|order_of_key()| returns the index of the first element, if there are multiple ones
+ \item \verb|find_by_order()| works as expected
+\end{itemize}
 
 \lstinputlisting[language=C++]{src/pbds/indexed_set.cpp}
 
