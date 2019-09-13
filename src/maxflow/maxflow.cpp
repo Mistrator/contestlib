@@ -47,7 +47,6 @@ int main() {
         g[a].push_back(b);
         g[b].push_back(a);
         d[a][b] += c;
-        d[b][a] = 0;
         cthresh += c;
     }
     int cvis = 0;
