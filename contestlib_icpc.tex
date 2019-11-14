@@ -1,0 +1,454 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[landscape, twocolumn]{geometry} % enable landscape, two-column layout
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{fancyhdr} % page headers
+
+\renewcommand{\familydefault}{\sfdefault}
+\lstset{basicstyle=\scriptsize\ttfamily, breaklines=true}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor} % define floor macro
+\DeclareRobustCommand{\stirling}{\genfrac\{\}{0pt}{}} % define Stirling macro
+
+\newcommand{\divides}{\mid}
+\newcommand{\notdivides}{\nmid}
+
+\pagestyle{fancy} % add page headers
+\fancyhf{}
+\lhead{Aalto University - Varokaa J:tä}
+\rhead{Page \thepage}
+
+\begin{document}
+
+\title{Team Reference Document}
+\author{Aalto University - Varokaa J:tä}
+\date{\today}
+\maketitle 
+
+\tableofcontents
+
+\section{Environment and workflow}
+\subsection{Compilation script}
+\lstinputlisting[language=bash]{src/compilation/build}
+
+\subsection{Stress testing}
+
+\texttt{srand(time(NULL));} changes seed only once a second and is unsuitable for stress testing. RNG seed initialization (requires x86 and g++):
+
+\lstinputlisting[language=C++]{src/stress_testing/srand.cpp}
+
+Shell script for stress testing with a brute force solution and a test generator:
+
+\lstinputlisting[language=bash]{src/stress_testing/stress.sh}
+
+\section{General techniques}
+\subsection{Bit tricks}
+
+g++ builtin functions:
+\begin{itemize}
+	\item \verb|__builtin_clz(x)|: number of zeros in the beginning
+	\item \verb|__builtin_ctz(x)|: number of zeros in the end
+	\item \verb|__builtin_popcount(x)|: number of set bits
+	\item \verb|__builtin_parity(x)|: parity of number of ones
+\end{itemize}
+
+There are separate functions of form \verb|__builtin_clzll(x)| for 64-bit integers. For the compiler to utilize the native \texttt{POPCNT} instruction, \texttt{\#pragma GCC target("sse4.2")} should be used.
+
+Iterate subsets of set s:
+\begin{lstlisting}[language=C++]
+int cs = 0;
+do {
+	// process subset cs
+} while(cs=(cs-s)&s);
+\end{lstlisting}
+
+Get lowest $1$-bit:
+\begin{lstlisting}[language=C++]
+int lsone = x&(-x);
+\end{lstlisting}
+
+\subsection{Mo's algorithm}
+
+Processes range queries on an array offline in $O(n\sqrt{n} \ f(n))$, where the array has $n$ elements, there are $n$ queries and addition/removal of an element to/from the active set takes $O(f(n))$ time.
+
+The array is divided into $\sqrt{n}$ blocks of $k = \sqrt{n}$ elements. Queries are sorted such that query $[a_i, b_i]$ goes before $[a_j, b_j]$ if:
+
+\begin{enumerate}
+	\item $\floor{\frac{a_i}{k}} < \floor{\frac{a_j}{k}}$ or
+	\item $\floor{\frac{a_i}{k}} = \floor{\frac{a_j}{k}}$ and $b_i < b_j$
+\end{enumerate}
+
+Active range is maintained between queries and the endpoints of the range are moved accordingly. Both endpoints move $O(n\sqrt{n})$ steps in total during the algorithm.
+
+\subsection {Arbitrary precision decimals}
+
+Python 3 implements arbitrary precision decimal arithmetic in module \texttt{decimal}. All decimal numbers are represented exactly and the precision is user-definable.
+
+\lstinputlisting[language=Python]{src/decimal/dec.py}
+
+\subsection {Arithmetic overflow checking}
+
+g++ implements efficient builtin functions for checking for arithmetic overflow. Functions are of form \linebreak \verb|bool __builtin_overflow(a, b, *res)| and return true if operation overflows. The result of the operation is returned through \texttt{res}.
+
+\begin{itemize}
+	\item \verb|__builtin_sadd_overflow()|, \linebreak \verb|__builtin_saddll_overflow|: addition
+	\item \verb|__builtin_ssub_overflow()|, \linebreak \verb|__builtin_ssubll_overflow|: subtraction
+	\item \verb|__builtin_smul_overflow()|, \linebreak \verb|__builtin_smulll_overflow|: multiplication
+\end{itemize}
+
+There are separate functions for 32- and 64-bit integers. Unsigned versions are of form \verb|__builtin_uadd_overflow()|.
+
+\subsection {g++ pragmas}
+
+Pragmas optimize all functions defined afterwards. They should be located in the very beginning of the source code, even before includes in order to optimize imported standard library code.
+
+\texttt{\#pragma GCC optimize("O3")}
+
+\texttt{\#pragma GCC optimize("Ofast")}, enables more optimizations but isn't always faster.
+
+\texttt{\#pragma GCC optimize("unroll-loops")}
+
+\texttt{\#pragma GCC target("arch=skylake")}
+
+\texttt{\#pragma GCC target("mmx,sse,sse2,sse3,\\ssse3,sse4.2,popcnt,avx,tune=native")} for ivybridge if \texttt{arch=ivybridge} fails.
+
+All possible target architectures are listed in compiler report if an invalid architecture is given to \texttt{arch}. Supported Intel Core generations in order: nehalem, sandybridge, ivybridge (for CF), haswell (first avx2), broadwell, skylake.
+
+\subsection {C++11 std::random}
+
+If different ranges are required on every iteration, just create a new distribution every time, it's quite fast.
+
+\lstinputlisting[language=C++]{src/random/random.cpp}
+
+\subsection {g++ vector extensions}
+
+Requires AVX support from the grading CPU. If heap-allocating, memory must be aligned to a multiple of 32. Stack allocation works normally.
+
+\lstinputlisting[language=C++]{src/vector_types/vector_types.cpp}
+
+\section{Data structures}
+
+\subsection{Lazy segment tree}
+
+Implements range add and range sum query in $O(log(n))$. $0$-indexed.
+
+\lstinputlisting[language=C++]{src/lazy_segtree/lazy_segtree.cpp}
+
+\subsection {Sparse segment tree}
+
+Implements point update and range sum query in $O(log(n))$. $0$-indexed.
+
+\lstinputlisting[language=C++]{src/sparse_segtree/sparse_segtree.cpp}
+
+\subsection {2D segment tree}
+
+Implements point update and subgrid query in $O(log^2(n))$. Grid is $0$-indexed.
+
+\lstinputlisting[language=C++]{src/2d_segtree/2dsegtree.cpp}
+
+\subsection {Treap}
+
+Implements split, merge, kth element, range update and range reverse in $O(log(n))$. Range update adds a value to every element in a subarray. Treap is $1$-indexed.
+
+Note: Memory management tools warn of about 30 MB memory leak for 500 000 elements. This is because nodes are not deleted when exiting program and is irrelevant in a competition. Deleting nodes would slow the treap down by a factor of 3.
+
+\lstinputlisting[language=C++]{src/treap/treap.cpp}
+
+\subsection {Sparse table}
+
+Implements range minimum/maximum query in $O(1)$ with \\ $O(n \ log(n))$ preprocessing. $0$-indexed.
+
+\lstinputlisting[language=C++]{src/sparse_table/sparse_table.cpp}
+
+\subsection {Policy-based data structures}
+
+\subsubsection {Indexed set}
+
+Works like \texttt{std::set} but adds support for indices. Set is 0-indexed. Requires g++. Has two additional functions:
+
+\begin{enumerate}
+	\item \verb|find_by_order(x)|: return an iterator to element at index $x$
+	\item \verb|order_of_key(x)|: return the index that element $x$ has or would have in the set, depending on if it exists
+\end{enumerate}
+
+Both functions work in $O(log(n))$.
+
+Changing \texttt{less} to \verb|less_equal| makes the set work like multiset. In this case:
+\begin{itemize}
+ \item \texttt{find()} will always return \texttt{end}
+ \item \verb|lower_bound()| works like \verb|upper_bound()| (returns an iterator to first element $> x$)
+ \item \verb|upper_bound()| works like \verb|lower_bound()| (returns an iterator to first element $ \geq x$)
+ \item \texttt{erase()} works as expected with iterators obtained from \verb|lower_bound()| and \verb|upper_bound()|, deleting a single element
+ \item \verb|order_of_key()| returns the index of the first element, if there are multiple ones
+ \item \verb|find_by_order()| works as expected
+\end{itemize}
+
+\lstinputlisting[language=C++]{src/pbds/indexed_set.cpp}
+
+\subsubsection {Hashmap}
+
+Works like \verb|std::unordered_map| but is many times faster.
+
+\lstinputlisting[language=C++]{src/pbds/hashmap.cpp}
+
+\subsection {k-max queue}
+
+Works like \texttt{std::queue}, but implements $O(1)$ max query for elements in queue. All operations are $O(1)$, \texttt{push\_back(x)} is amortized $O(1)$. Can be used as a min queue if elements are inserted as negative.
+
+It's not possible to return popped element on \texttt{pop\_front()}.
+
+\lstinputlisting[language=C++]{src/kmax_queue/kmax_queue.cpp}
+
+\subsection{Union-find}
+
+Uses path compression, \texttt{id(x)} has amortized time complexity $O(a^{-1}(n))$ where $a^{-1}$ is inverse Ackermann function.
+
+\lstinputlisting[language=C++]{src/unionfind/unionfind.cpp}
+
+\section {Mathematics}
+
+\subsection {Number theory}
+
+\begin{itemize}
+	\item Prime factorization of $n$: $p_1^{\alpha_1}p_2^{\alpha_2} \dots p_k^{\alpha_k}$
+	\item Number of factors: $\tau(n) = \prod_{i=1}^{k} (\alpha_i+1) \approx \sqrt[3]n$
+		\begin {itemize}
+			\item $max(\tau(1), \tau(2), \dots \tau(10^9)) = 1344$
+			\item $max(\tau(1), \tau(2), \dots, \tau(10^{18})) = 103680$
+		\end {itemize}
+	\item Sum of factors: $\sigma(n) = \prod_{i=1}^{k} \frac{p_i^{\alpha_i+1}-1}{p_i-1}$
+	\item Product of factors: $\mu(n) = n^{\tau(n)/2}$
+\end{itemize}
+
+Euler's totient (phi) function $\varphi(n)$ $(1, 1, 2, 2, 4, 2, 6, 4, 6, 4, \dots)$: counts numbers coprime with $n$ in range $1 \dots n$
+
+\[
+	\varphi(n) =
+	\begin{cases}
+		n-1 &\text{if $n$ is prime} \\
+		\prod_{i=1}^{k} p_i^{a_i-1}(p_i-1) &\text{otherwise}
+	\end{cases}
+\]
+
+The function can be precomputed for all natural numbers $\leq n$ in $O(n\ log(n))$ with a sieve:
+
+\lstinputlisting[language=C++]{src/euler_phi_sieve/phi_sieve.cpp}
+
+There are $\varphi(\frac{n}{d})$ numbers $i$ $(1 \leq i \leq n)$ for which $gcd(i, n) = d$ if $d \divides n$. If $d \notdivides n$, there are none.
+
+Fermat's theorem: $x^{m-1} \mod m = 1$ when $m$ is prime and $x$ and $m$ are coprime. It follows that $x^k \mod m = x^{k \mod (m-1)} \mod m$.
+
+Modular inverse $x^{-1} = x^{\varphi(m)-1}$. If $m$ is prime, $x^{-1} = x^{m-2}$. Inverse exists if and only if $x$ and $m$ are coprime.
+
+\subsection {Combinatorics}
+
+Binomial coefficients:
+
+\[ \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k} \]
+\[ \binom{n}{0} = \binom{n}{n} = 1 \]
+
+Catalan numbers $(1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862, 16796 \dots)$:
+
+\[ C_n = \frac{1}{n+1} \binom{2n}{n} \]
+
+Classic examples of Catalan numbers: number of balanced pairs of parentheses,  number of mountain ranges ($n$ upstrokes and $n$ downstrokes all staying above the original line), number of paths from upper left corner to lower right corner staying above the main diagonal in a $n \times n$ square, ways to triangulate a $n+2$ sided regular polygon, ways to shake hands between $2n$ people in a circle such that no arms cross, number of rooted binary trees with $n$ nodes that have $2$ children, number of rooted trees with $n$ edges, number of permutations of $1 \dots n$ that don't have an increasing subsequence of length $3$.
+
+Number of derangements (no element stays in original place) of $1, 2, \dots, n$ $(1, 0, 1, 2, 9, 44, 265, 1854, 14833, 133496, 1334961, \dots)$:
+
+\[
+	f(n) =
+	\begin{cases}
+		0 &n = 1 \\
+		1 &n = 2 \\
+		(n-1)(f(n-2)+f(n-1)) &n > 2
+	\end{cases}
+\]
+
+Stirling numbers of the second kind $\stirling{n}{k}$: number of ways to partition a set of $n$ objects into $k$ non-empty subsets.
+\[ 1 \] \[ 0, 1 \] \[0, 1, 1 \] \[0, 1, 3, 1 \] \[ 0, 1, 7, 6, 1 \] \[ 0, 1, 15, 25, 10, 1 \] \[ 0, 1, 31, 90, 65, 15, 1 \]
+
+\[ \stirling{n+1}{k} = k\stirling{n}{k}+\stirling{n}{k-1} \quad (k > 0) \] 
+\[ \stirling{0}{0} = 1, \stirling{n}{0} = \stirling{0}{n} = 0 \quad (n > 0) \]
+
+\subsection {Matrices}
+
+Matrix $A$ = $a \times n$, matrix $B$ = $n \times b$. Matrix multiplication:
+
+\[ AB[i,j] = \sum_{k=1}^{n} A[i,k] \cdot B[k,j] \]
+
+Let linear recurrence $f(n) = c_1f(n-1) + c_2f(n-2) + \dots + c_kf(n-k)$ with initial values $f(0), f(1), \dots, f(k-1)$. $c_1, c_2, \dots, c_n$ are constants.
+
+Transition matrix $X$:
+
+\[
+	X =
+	\begin{pmatrix}
+		0 & 1 & 0 & \dots & 0 \\
+		0 & 0 & 1 & \dots & 0 \\
+		\vdots & \vdots & \vdots & \ddots & \vdots \\
+		0 & 0 & 0 & \dots & 1 \\
+		c_k & c_{k-1} & c_{k-2} & \dots & c_1
+	\end{pmatrix}
+\]
+
+Now $f(n)$ can be calculated in $O(k^3 log(n))$:
+
+\[
+	\begin{pmatrix}
+		f(n) \\
+		f(n+1) \\
+		\vdots \\
+		f(n+k-1)
+	\end{pmatrix}
+	= X^n \cdot
+	\begin{pmatrix}
+		f(0) \\
+		f(1) \\
+		\vdots \\
+		f(k-1)
+	\end{pmatrix}
+\]
+
+\lstinputlisting[language=C++]{src/matrix/matrix.cpp}
+
+\subsection {Summations and progressions}
+
+\begin{itemize}
+
+	\item Sum of naturals: $\sum_{i=1}^{n} x = \frac{n(n+1)}{2}$
+	\item Sum of squares: $\sum_{i=1}^{n} x^2 = \frac{n(n+1)(n+2)}{6}$
+	\item Arithmetic progression: $a + \dots + b = \frac{n(a+b)}{2}$, where $n$ is the number of terms, $a$ is the first term and $b$ is the last term
+	\item Geometric progression: $a + ar + ar^2 + \dots + ar^{n-1} = a \frac{1-r^n}{1-r}$, where $n$ is the number of terms, $a$ is the first term and $r (r \neq 1)$ is the ratio between two successive terms
+	\begin{itemize}
+		\item If $r = 1$, sum is $na$
+		\item Also $a + ar + ar^2 + \dots + b = \frac{a-br}{1-r}$, where $a$ is the first term, $b$ is the last term and $r$ is the ratio between two successive terms
+	\end{itemize}
+
+\end{itemize}
+
+Terms of sum $S = \sum_{i=1}^{n} \floor{\frac{n}{i}}$ get at most $O(\sqrt{n})$ distinct values. All terms and their counts can be found as follows in $O(\sqrt{n})$:
+
+\lstinputlisting[language=C++]{src/harmonic_floor/harmonic_floor.cpp}
+
+\subsection {Miller-Rabin}
+
+Deterministic primality test for all $64$-bit integers. Requires \verb|__int128| support to test over 32-bit integers.
+
+\lstinputlisting[language=C++]{src/miller_rabin/miller_rabin.cpp}
+
+\subsection {Pollard-Rho}
+
+Finds a factor of $x$ in $O(\sqrt[4]{x})$. Requires \verb|__int128| support to factor over 32-bit integers.
+
+If $x$ is prime or a perfect square, algorithm might not terminate or it might return $1$. Primality must be checked separately.
+
+\lstinputlisting[language=C++]{src/pollardrho/pollardrho.cpp}
+
+\subsection {Extended Euclidean algorithm}
+
+\lstinputlisting[language=C++]{src/exteuclid/exteuclid.cpp}
+
+\subsection {Linear sieve}
+
+\lstinputlisting[language=C++]{src/linear_sieve/linear_sieve.cpp}
+
+\section {Geometry}
+
+\lstinputlisting[language=C++]{src/geometry/geometry.cpp}
+
+\section {Graph algorithms}
+
+\subsection {Kosaraju's algorithm}
+
+Finds strongly connected components in a directed graph in $O(n + m)$.
+
+\begin{enumerate}
+	\item Create an inverse graph where all edges are reversed.
+	\item Do a DFS traversal on original graph and add all nodes in post-order to a vector.
+	\item Reverse the obtained vector.
+	\item Iterate the vector. If a node doesn't belong to a component, create new component and assign current node to it, and do a DFS \textbf{in inverse graph} from current node and add all reachable nodes to the component that was just created.
+\end{enumerate}
+
+\subsection {Bridges}
+
+An edge $u-v$ is a bridge if there is no edge from the subtree of $v$ to any node with lower depth than $u$ in DFS tree. $O(n+m)$.
+
+\lstinputlisting[language=C++]{src/bridges/bridges.cpp}
+
+\subsection {Articulation points}
+
+A vertex $u$ is an articulation point if there is no edge from the subtree of $u$ to any parent of $u$ in DFS tree, or if $u$ is the root of DFS tree and has at least $2$ children. $O(n+m)$ if removing duplicates doesn't count.
+
+Set \texttt{res} can be replaced with a vector if duplicates are removed afterwards.
+
+\lstinputlisting[language=C++]{src/articulation_points/articulation_points.cpp}
+
+\subsection {Maximum flow (scaling algorithm)}
+
+Scaling algorithm, uses DFS to find an augmenting path where each edge weight is larger than or equal to a certain threshold. Time complexity $O(m^2 \ log(c))$, where c is the starting threshold (sum of all edge weights in the graph).
+
+\lstinputlisting[language=C++]{src/maxflow/maxflow.cpp}
+
+\subsection {Theorems on flows and cuts}
+
+Maximum flow is always equal to minimum cut. Minimum cut can be found by running a maximum flow algorithm and dividing the resulting flow graph into two sets of vertices. Set A contains all vertices that can be reached from source using positive-weight edges. Set B contains all other vertices. Minimum cut consists of the edges between these two sets.
+
+Number of edge-disjoint (= each edge can be used at most once) paths in a graph is equal to maximum flow on graph where capacity of each edge is $1$.
+
+Number of vertex-disjoint paths can be found the same way as edge-disjoint paths, but each vertex is duplicated and an edge is added between the two vertices. All incoming edges go to the first vertex and all outgoing edges start from the second vertex.
+
+Maximum matching of a bipartite graph can be found by adding a source and a sink to the graph and connecting source to all left vertices and sink to all right vertices. Maximum matching equals maximum flow on this graph.
+
+König's theorem: sizes of a minimum vertex cover (= minimum set of vertices such that each edge has at least one endpoint in the set) and a maximum matching are always equal in a bipartite graph. Maximum independent set (= maximum set of vertices such that no two vertices in the set are connected with an edge) consists of the vertices not in a minimum vertex cover.
+
+\subsection {Heavy-light decomposition}
+
+Supports updates and queries on path between two vertices $a$ and $b$ in $O(log^2(n))$.
+
+Doesn't explicitly look for LCA, instead climbs upwards from the lower chain until both vertices are in the same chain.
+
+Requires a segment tree implementation that corresponds to the queries. Lazy segtree, for example, can be pasted directly in.
+
+\lstinputlisting[language=C++]{src/hld/hld.cpp}
+
+\section {Tree algorithms}
+
+\subsection {Smaller to larger}
+
+Answers queries offline on entire subtrees or specifically on vertices with depth $d$ in a subtree. Normally $O(n\ log\ n)$ for all queries, the complexity may worsen depending on what is stored for each node. If the depth is queried on, merge to the deepest subtree, otherwise to the largest one. When storing data for each depth, store the highest vertex last so it's efficient to append higher vertices.
+
+\lstinputlisting[language=C++]{src/smaller_to_larger/stl.cpp}
+
+\subsection {Subtree merging DP}
+
+For each subtree of a tree, some DP is calculated for each vertex by merging all child subtrees of the vertex together one by one. Basically we take $a$ elements from current subtree root and the already merged child subtrees and $b$ elements from the child subtree being merged. This is the technique used in \textit{Looking for a Challenge - Barricades}.
+
+The algorithm looks like $O(n^3)$, but actually runs in $O(n^2)$.
+
+\lstinputlisting[language=C++]{src/subtree_merge_dp/subtree_merge_dp.cpp}
+
+\section {String algorithms}
+
+\subsection {Polynomial hashing}
+
+If hash collisions are likely, compute two hashes with two distinct pairs of constants of magnitude $10^9$ and use their product as the actual hash.
+
+\lstinputlisting[language=C++]{src/stringhashing/stringhashing.cpp}
+
+\subsection {Z-algorithm}
+
+Constructs the Z-array for string $s$. Z-array tells for each $i$ the length of the longest substring that begins at $i$ and is a prefix of $s$. $O(n)$.
+
+\lstinputlisting[language=C++]{src/z_algorithm/z.cpp}
+
+\subsection {Suffix array}
+
+Constructs the suffix array for string $s$. By default, the array is a cyclic suffix array which has all the cyclic rotations of the string in lexicographic order. Creates a normal suffix array if \texttt{\$} is appended to the string. In that case the first element in the suffix array must be discarded.
+
+\lstinputlisting[language=C++]{src/suffix_array/suffix.cpp}
+
+\end{document}
